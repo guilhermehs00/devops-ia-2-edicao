@@ -2,7 +2,7 @@ name: CI-CD
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   workflow_dispatch:
 
 jobs:
@@ -15,7 +15,7 @@ jobs:
 
       - uses: actions/setup-python@v6
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install Dependencies
         working-directory: 02-encontros-tech
@@ -57,20 +57,20 @@ jobs:
           mkdir -p ~/.kube
           echo "${{ secrets.KUBECONFIG_CONTENT }}" > ~/.kube/config
 
-      - name: Create secrets in homolog
+      - name: Create namespace and secrets (Homolog)
         run: |
           kubectl create namespace tech-homolog --dry-run=client -o yaml | kubectl apply -f -
           kubectl create secret generic encontros-tech-secrets \
-          --from-literal=DATABASE_URL="${{ secrets.DATABASE_URL }}" \
-          --namespace=tech-homolog \
-          --dry-run=client -o yaml | kubectl apply -f -
+            --from-literal=DATABASE_URL="${{ secrets.DATABASE_URL }}" \
+            --namespace=tech-homolog \
+            --dry-run=client -o yaml | kubectl apply -f -
 
       - name: Deploy to Kubernetes Cluster (Homolog)
         uses: azure/k8s-deploy@v5
         with:
           namespace: tech-homolog
           manifests: |
-            02-encontros-tech/k8s/manifest.yaml
+            02-encontros-tech/k8s/manifests.yaml
           images: |
             guilhermehs00/encontros-tech:v${{ github.run_number }}
           strategy: basic
@@ -89,20 +89,20 @@ jobs:
           mkdir -p ~/.kube
           echo "${{ secrets.KUBECONFIG_CONTENT }}" > ~/.kube/config
 
-      - name: Create secrets in producao
+      - name: Create namespace and secrets (Produção)
         run: |
           kubectl create namespace tech-producao --dry-run=client -o yaml | kubectl apply -f -
           kubectl create secret generic encontros-tech-secrets \
-          --from-literal=DATABASE_URL="${{ secrets.DATABASE_URL }}" \
-          --namespace=tech-producao \
-          --dry-run=client -o yaml | kubectl apply -f -
+            --from-literal=DATABASE_URL="${{ secrets.DATABASE_URL }}" \
+            --namespace=tech-producao \
+            --dry-run=client -o yaml | kubectl apply -f -
 
-      - name: Deploy to Kubernetes Cluster (Producao)
+      - name: Deploy to Kubernetes Cluster (Produção)
         uses: azure/k8s-deploy@v5
         with:
           namespace: tech-producao
           manifests: |
-            02-encontros-tech/k8s/manifest.yaml
+            02-encontros-tech/k8s/manifests.yaml
           images: |
             guilhermehs00/encontros-tech:v${{ github.run_number }}
           strategy: basic
