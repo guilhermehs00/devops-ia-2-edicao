@@ -32,12 +32,15 @@ jobs:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and Push
-      - uses: docker/build-pish-action@v6
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v6
         with:
-          push: true
-          tags: guilhermehs00/encontros-tech:v${{ github.run_number }}
+          context: ./02-encontros-tech
           file: ./02-encontros-tech/Dockerfile
+          push: true
+          tags: |
+            guilhermehs00/encontros-tech:latest
+            guilhermehs00/encontros-tech:v${{ github.run_number }}
 
   CD:
     runs-on: ubuntu-latest
