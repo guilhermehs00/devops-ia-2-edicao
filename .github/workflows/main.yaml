@@ -32,7 +32,14 @@ jobs:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and Push Docker Image
+      - name: Build and Push
+      - uses: docker/build-pish-action@v6
+        with:
+          push: true
+          tags: |
+            ${{ vars.DOCKERHUB_USERNAME }}/encontros-tech:v1
+            ${{ vars.DOCKERHUB_USERNAME }}/encontros-tech:v${{ github.run_number }}
+
         run: |
           docker build -t ${{ vars.DOCKERHUB_USERNAME }}/encontros-tech:latest 02-encontros-tech
           docker push ${{ vars.DOCKERHUB_USERNAME }}/encontros-tech:latest
