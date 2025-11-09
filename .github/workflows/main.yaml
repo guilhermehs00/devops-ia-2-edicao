@@ -36,13 +36,8 @@ jobs:
       - uses: docker/build-pish-action@v6
         with:
           push: true
-          tags: |
-            ${{ vars.DOCKERHUB_USERNAME }}/encontros-tech:v1
-            ${{ vars.DOCKERHUB_USERNAME }}/encontros-tech:v${{ github.run_number }}
-
-        run: |
-          docker build -t ${{ vars.DOCKERHUB_USERNAME }}/encontros-tech:latest 02-encontros-tech
-          docker push ${{ vars.DOCKERHUB_USERNAME }}/encontros-tech:latest
+          tags: guilhermehs00/encontros-tech:v${{ github.run_number }}
+          file: ./02-encontros-tech/Dockerfile
 
   CD:
     runs-on: ubuntu-latest
