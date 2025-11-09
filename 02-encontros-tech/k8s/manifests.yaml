@@ -16,12 +16,16 @@ spec:
     spec:
       containers:
       - name: encontros-tech
-        image: fabricioveronez/bootcamp-encontros-tech:v1
+        # A imagem será substituída automaticamente pelo pipeline do GitHub
+        image: guilhermehs00/encontros-tech:latest
         ports:
         - containerPort: 8000
         env:
         - name: DATABASE_URL
-          value: "postgresql://doadmin:AVNS_CE9P-aoE7jr3lxNg8jn@private-db-postgresql-nyc1-21167-do-user-10478846-0.e.db.ondigitalocean.com:25060/defaultdb?sslmode=require"
+          valueFrom:
+            secretKeyRef:
+              name: encontros-tech-secrets
+              key: DATABASE_URL
         - name: APP_TITLE
           value: "Encontros Tech"
         - name: DEBUG
@@ -40,6 +44,25 @@ spec:
           value: "1.0.0"
         - name: PROMETHEUS_MULTIPROC_DIR
           value: "/tmp/prometheus_multiproc"
+        resources:
+          requests:
+            cpu: "200m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 15
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 10
 ---
 apiVersion: v1
 kind: Service
