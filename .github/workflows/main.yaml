@@ -57,6 +57,9 @@ jobs:
           mkdir -p ~/.kube
           echo "${{ secrets.KUBECONFIG_CONTENT }}" > ~/.kube/config
 
+      - name: Export KUBECONFIG
+        run: echo "KUBECONFIG=$HOME/.kube/config" >> $GITHUB_ENV
+
       - name: Create namespace and secrets (Homolog)
         run: |
           kubectl create namespace tech-homolog --dry-run=client -o yaml | kubectl apply -f -
@@ -88,6 +91,9 @@ jobs:
         run: |
           mkdir -p ~/.kube
           echo "${{ secrets.KUBECONFIG_CONTENT }}" > ~/.kube/config
+
+      - name: Export KUBECONFIG
+        run: echo "KUBECONFIG=$HOME/.kube/config" >> $GITHUB_ENV
 
       - name: Create namespace and secrets (Produção)
         run: |
